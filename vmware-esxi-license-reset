@@ -1,0 +1,33 @@
+- ssh to esxi server (using root)
+For example- ssh root@192.168.20.55
+
+Note: by default your present working directory will be "/" when connected thru ssh on esxi server.
+
+- create sample script as below:
+
+vi reset-eval.sh
+(type/copy below entries in script file)
+#!/bin/sh
+## remove license
+echo 'Removing License'
+rm -r /etc/vmware/license.cfg /etc/vmware/vmware.lic
+## get a new trial license
+echo 'Copying new license'
+cp /etc/vmware/.#license.cfg /etc/vmware/license.cfg
+cp /etc/vmware/.#vmware.lic /etc/vmware/vmware.lic
+## restart services
+echo 'Restarting VPXA'
+/etc/init.d/vpxa restart
+:wq! (save & exit)
+
+
+- set executable permission to script file-
+chmod +x reset-eval.sh
+
+
+- to auto-execute the script on every 55th day; set cron job entry as -
+
+vi /var/spool/cron/crontabs/root
+(type/copy below entries)
+0 0 */55 * * /reset-eval.sh
+:wq! (save & exit)
